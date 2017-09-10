@@ -1,0 +1,69 @@
+info:
+  component: Zuul Server
+spring:
+  application:
+    name: zull-server
+endpoints:
+  restart:
+    enabled: true
+  shutdown:
+    enabled: true
+  health:
+    sensitive: true
+
+zuul:
+  ignored-services: "*"
+  routes:
+      restaurantapi:
+        path: /restaurantapi/**
+        serviceId: restaurant-service
+        stripPrefix: true
+
+server:
+  port: 8765
+  compression:
+    enabled: true
+
+hystrix:
+  threadpool:
+    default:
+      coreSize: 100
+      mazQueueSize: -1
+      queueSizeRejectionThreshold: 5
+    command:
+      default:
+        circuitBreaker:
+          sleepWindowInMilliseconds: 30000
+          requestVolumenThreshold: 2
+        execution:
+          isolation:
+            strategy: THREAD
+            thread:
+              timeoutInMelliseconds: 6000
+
+eureka:
+  instance:
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 5
+    metadata-map:
+      instance: ${vcap.services.${PREFIX:}eureka.credentials.uri:http//user:password@localhost:8761}/eureka/
+    fetchRegistry: true
+
+logging:
+  level:
+    ROOT: info
+    org.springframework.web: INFO
+
+app:
+  ConnectionTimeout: 100
+  ReadTimeout: 3000
+
+
+
+
+
+
+
+
+
+
