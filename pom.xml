@@ -23,6 +23,7 @@
       <module>restaurante-service-project</module>
       <module>eureka-server-project</module>
       <module>dashboard-server-project</module>
+      <module>turbine-server-project</module>
    </modules>
 
    <!-- profiles>

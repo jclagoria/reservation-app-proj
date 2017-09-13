@@ -1,0 +1,30 @@
+info:
+  component: Turbine Server
+
+
+server:
+  port:8080
+
+management:
+  port: 8990
+
+turbine:
+  aggregator:
+      clusterConfig: USER-SERVICE,RESTAURANT-SERVICE
+  appConfig: user-service,restaurant-service
+
+eureka:
+  instance:
+    lease-renewal-interval-in-seconds: 10
+    metadata-map:
+           instanceId: ${vcap.application.instance_id:${spring.application.name}:${spring.application.instance_id:${random.value}}}
+  client:
+    service-url:
+      default-zone: ${vcap.services.${PREFIX:}eureka.credentials.uri:http://user:password@localhost:8761}/eureka/
+    fetch-registry: true
+
+logging:
+  level:
+    root: INFO
+    com.netflix.discovery: 'OFF'
+    org.springframework.integration: DEBUG

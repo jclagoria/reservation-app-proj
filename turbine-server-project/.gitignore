@@ -22,8 +22,7 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
-/.mvn/
 /mvnw.cmd
+/turbine-server.iml
+/.mvn/
 /mvnw
-/eureka-server.iml
-/target/
