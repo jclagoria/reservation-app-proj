@@ -15,7 +15,7 @@
 	<name>online-table-reservation:dashboard-server</name>
 
 	<properties>
-
+		<start-class>ar.com.reservation.app.dashboard.DashboardApp</start-class>
 	</properties>
 
 	<dependencies>
