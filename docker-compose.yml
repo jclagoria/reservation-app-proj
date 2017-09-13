@@ -1,0 +1,11 @@
+eureka:
+  image: localhost:5000/sourabhh/eureka-server:0.0.1-SNAPSHOT
+  ports:
+    - "8761:8761"
+
+restaurant-service:
+  image: localhosts:5000/sourabhh/restaurant-service:0.0.1-SNAPSHOT
+  ports:
+    - "8080:8080"
+  links:
+    - eureka
