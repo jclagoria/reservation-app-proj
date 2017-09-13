@@ -1,0 +1,37 @@
+server:
+  port: ${vcap.application.port:8761}
+
+info:
+  component: Discovery Server
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: ${vcap.services.${PREFIX:}eureka.credentials.uri:http://user.password@localhost:8761}/eureka/
+  server:
+    wait-time-in-ms-when-sync-empty: 0
+    enable-self-preservation: false
+
+spring:
+  thymeleaf:
+    enabled: false
+
+---
+spring:
+  profiles: docker
+
+eureka:
+  instance:
+    hostname: eureka
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      default-zone: http://eureka:8761/eureka/
+  server:
+    wait-time-in-ms-when-sync-empty: 0
+    enable-self-preservation: false
