@@ -21,6 +21,7 @@
       <module>common</module>
       <module>zuul-server-project</module>
       <module>restaurante-service-project</module>
+      <module>eureka-server-project</module>
    </modules>
 
    <!-- profiles>
