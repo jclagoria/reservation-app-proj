@@ -1,3 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
 *.iml
 .idea
+/restaurante-service-project/mvnw
+/restaurante-service-project/mvnw.cmd
+/restaurante-service-project/.mvn/
