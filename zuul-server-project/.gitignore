@@ -18,3 +18,4 @@ mvnw
 *.ipr
 
 .mvn
+/target/
