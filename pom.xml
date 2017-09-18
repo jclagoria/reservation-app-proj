@@ -25,6 +25,8 @@
       <module>dashboard-server-project</module>
       <module>turbine-server-project</module>
       <module>user-service-project</module>
+      <module>api-service-project</module>
+      <module>booking-service-project</module>
    </modules>
 
    <!-- profiles>
