@@ -24,6 +24,7 @@
       <module>eureka-server-project</module>
       <module>dashboard-server-project</module>
       <module>turbine-server-project</module>
+      <module>user-service-project</module>
    </modules>
 
    <!-- profiles>
