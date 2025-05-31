@@ -5,17 +5,20 @@ import ar.com.reservation.app.restaurant.domain.model.entity.Restaurant;
 import ar.com.reservation.app.restaurant.domain.service.RestaurantService;
 import ar.com.reservation.app.restaurant.domain.vaueobject.RestaurantVO;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import org.aspectj.apache.bcel.generic.LOOKUPSWITCH;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -56,12 +59,15 @@ public class RestaurantController {
         Collection<Restaurant> restaurants;
         try {
             restaurants = restaurantService.findByName(name);
+        } catch (NoSuchElementException ex) {
+            LOGGER.log(Level.WARNING, "No restaurants found for name: " + name, ex);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Exception raised findByName REST Call", ex);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return restaurants.size() > 0 ? new ResponseEntity<>(restaurants, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -80,12 +86,15 @@ public class RestaurantController {
         Entity restaurant;
         try {
             restaurant = restaurantService.findById(id);
+        } catch (NoSuchElementException ex) {
+            LOGGER.log(Level.WARNING, "No restaurant found for id: " + id, ex);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
             LOGGER.log(Level.WARNING, "Exception raised findById REST Call {0}", ex);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return restaurant != null ? new ResponseEntity<>(restaurant, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -102,11 +111,14 @@ public class RestaurantController {
         BeanUtils.copyProperties(restaurantVO, restaurant);
         try {
             restaurantService.add(restaurant);
+        } catch (DataIntegrityViolationException ex) {
+            LOGGER.log(Level.WARNING, "Data integrity violation while adding restaurant", ex);
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         } catch (Exception ex) {
             LOGGER.log(Level.WARNING, "Exception raised add Restaurant REST Call {0}", ex);
-            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(restaurant, HttpStatus.CREATED);
     }
 
     /**
@@ -115,9 +127,11 @@ public class RestaurantController {
      * @param input
      * @return
      */
-    public ResponseEntity<Entity> defaultRestaurant(String input) {
-        LOGGER.warning("Fallback method for restaurant-service is being used.");
-        return new ResponseEntity<>((MultiValueMap<String, String>) null, HttpStatus.NO_CONTENT);
+    public ResponseEntity<Map<String, String>> defaultRestaurant(String input) {
+        LOGGER.warning("Fallback method for restaurant-service is being used. Input: " + input);
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Service unavailable. Please try again later.");
+        return new ResponseEntity<>(response, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     /**
@@ -126,9 +140,11 @@ public class RestaurantController {
      * @param input
      * @return
      */
-    public ResponseEntity<Collection<Restaurant>> defaultRestaurants(String input) {
-        LOGGER.warning("Fallback method for user-service is being used.");
-        return new ResponseEntity<>((MultiValueMap<String, String>) null, HttpStatus.NO_CONTENT);
+    public ResponseEntity<Map<String, String>> defaultRestaurants(String input) {
+        LOGGER.warning("Fallback method for restaurant-service (plural) is being used. Input: " + input);
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Service unavailable. Please try again later.");
+        return new ResponseEntity<>(response, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
 }
